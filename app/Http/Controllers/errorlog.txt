@@ -1,0 +1,57 @@
+* Hostname localhost was found in DNS cache
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> POST /restconf/config/opendaylight-inventory:nodes/node/openflow:1/meter/2 HTTP/1.1
+Host: localhost:8181
+Accept: */*
+Content-Length:26
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+* upload completely sent off: 26 out of 26 bytes
+< HTTP/1.1 400 Bad Request
+< Set-Cookie: JSESSIONID=302sc4uh3omqwt65a8vnbx0k;Path=/restconf
+< Expires: Thu, 01 Jan 1970 00:00:00 GMT
+< Set-Cookie: rememberMe=deleteMe; Path=/restconf; Max-Age=0; Expires=Sat, 22-Dec-2018 14:24:45 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< 
+* Connection #0 to host localhost left intact
+* Hostname in DNS cache was stale, zapped
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> POST /restconf/config/opendaylight-inventory:nodes/node/openflow:1/meter/2 HTTP/1.1
+Host: localhost:8181
+Accept: */*
+Content-Length:26
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+* upload completely sent off: 26 out of 26 bytes
+< HTTP/1.1 400 Bad Request
+< Set-Cookie: JSESSIONID=1tpm8ssk1zg6p1fny2rd0zn6j7;Path=/restconf
+< Expires: Thu, 01 Jan 1970 00:00:00 GMT
+< Set-Cookie: rememberMe=deleteMe; Path=/restconf; Max-Age=0; Expires=Sat, 22-Dec-2018 14:51:24 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< 
+* Connection #0 to host localhost left intact
+* Hostname localhost was found in DNS cache
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8181 (#0)
+> POST /restconf/config/opendaylight-inventory:nodes/node/openflow:1/meter/2 HTTP/1.1
+Host: localhost:8181
+Accept: */*
+Content-Length:26
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+* upload completely sent off: 26 out of 26 bytes
+< HTTP/1.1 400 Bad Request
+< Set-Cookie: JSESSIONID=1xi9t2h5orvtfelysz29f5jd5;Path=/restconf
+< Expires: Thu, 01 Jan 1970 00:00:00 GMT
+< Set-Cookie: rememberMe=deleteMe; Path=/restconf; Max-Age=0; Expires=Sat, 22-Dec-2018 14:55:49 GMT
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< 
+* Connection #0 to host localhost left intact
