@@ -17,19 +17,13 @@
 			<input type="button" value="new meter" onclick="window.location.href='{{ url('/node/'.$currentNode.'/newmeter') }}'"/>
 		</form>
 		<form>
-			<input type="button" value="edit meter" onclick="window.location.href='{{ url('/node/'.$currentNode.'/editmeter') }}'"/>
-		</form>
-		<form>
 			<input type="button" value="delete meter" onclick="window.location.href='{{ url('/node/'.$currentNode.'/deletemetermenu') }}'"/>
 		</form>
 		<form>
 			<input type="button" value="new flow" onclick="window.location.href='{{ url('/node/'.$currentNode.'/newflow') }}'"/>
 		</form>
 		<form>
-			<input type="button" value="edit flow" onclick="window.location.href='{{ url('/node/'.$currentNode.'/editflow') }}'"/>
-		</form>
-		<form>
-			<input type="button" value="delete flow" onclick="window.location.href='{{ url('/node/'.$currentNode.'/deleteflowmenu') }}'"/>
+			<input type="button" value="delete flow" onclick="window.location.href='{{ url('/node/'.$currentNode.'/deleteflow/table/0') }}'"/>
 		</form>
 	</center>
 @endsection

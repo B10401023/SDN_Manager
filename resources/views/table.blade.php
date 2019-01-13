@@ -9,7 +9,7 @@
     </h1>
 	<center>
 		@foreach ($tables as $table)
-	    	<a>table ID : </a><a href="{{ url('/node/'.$node_id.'/deleteflowmenu/table/'.$table['id']) }}">{{ $table['id'] }}</a>
+	    	<a>Flow ID : </a><a href="{{ url('/node/'.$node_id.'/deleteflowmenu/table/'.$table['id']) }}">{{ $table['id'] }}</a>
 		@endforeach
 	</center>
 @endsection

@@ -34,7 +34,6 @@ class SwitchController extends Controller
             //$a = array($json['node']['0']['node-connector'][$i]['flow-node-inventory:name']);
             $i++;
         }
-	
 	   return view('control', ['nodes'=>$a, 'currentNode'=>$node_id]);
     }
 

@@ -6,72 +6,94 @@ use Illuminate\Http\Request;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
 
 
 class MeterController extends Controller
 {
-    //
-    static $meter_count = 0;
     public function newMeter($node_id)
     {
-        //$ch = curl_init();
- 
-        //傳送給 web service 的資料，並壓成json格式
-        $data =  '{
-    "flow-node-inventory:meter": [
+        $meter_id = 0;
+        $url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id;
+        $handle = curl_init($url);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+        /* Get the HTML or whatever is linked in $url. */
+        $response = curl_exec($handle);
+        /* Check for 404 (file not found). */
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        if($httpCode != 404)
         {
-            "meter-id": 2, 
-            "meter-name": "s3toh2", 
-            "flags": "meter-kbps meter-burst", 
-            "container-name": "abcd",
-            "meter-band-headers": {
-                "meter-band-header": [
+            $client = new Client();
+            $response = $client->get($url, ['auth' => ['admin', 'admin']]);
+            $json = json_decode($response->getBody()->getContents(), true);
+            if(isset($json['node']['0']['flow-node-inventory:meter']))
+            {
+                $meters = $json['node']['0']['flow-node-inventory:meter'];
+                foreach ($meters as $meter) 
+                {
+                    if($meter['meter-id'] > $meter_id)
                     {
-                        "band-id": 0,
-                        "meter-band-types": {
-                            "flags": "ofpmbt-drop"
-                        },
-                        "drop-rate": 4000,
-                        "drop-burst-size": 100
+                        $meter_id = $meter['meter-id'];
                     }
-                ]
+                }
+            }
+            else
+            {
+                // do nothing
             }
         }
-    ]
-}';
-                    
-        //指定 header 參數與類型           
-        /*$header[] = 'Authorization: Basic YWRtaW46YWRtaW4=';           
-        $header[] = 'Content-Type: application/json';
-        $header[] = 'Accept: application/json';
-         
-        curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
-        curl_setopt($ch, CURLOPT_URL, "http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:2/meter/2");  //本機測試URL
-        //curl_setopt($ch, CURLOPT_URL, 'https://www.ls-ecommerce.com.tw/product/inquiry'); //遠端測試URL  
-        curl_setopt($ch, CURLOPT_POST, true); 
-        curl_setopt($ch, CURLOPT_POSTFIELDS,$data); 
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-         
-        $result = curl_exec($ch); 
-         
-        //顯示錯誤訊息
-        if(!$result){
-           print_r(curl_error($ch));
+        else
+        {
+            // do nothing
         }
-            
-        curl_close($ch);*/
-        //$url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:2/meter/2';
-            //$url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id.'/meter/'.$i;
+        //return $json;
+        return view('newMeter', ['id'=>$node_id, 'count' => ++$meter_id]);
+    }
+
+    public function newMeterSubmit($node_id, $count)
+    {
+        $url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id.'/meter/'.$count;
+        $meterName = $_GET['meterName'];
+        $dropRate = $_GET['dropRate'];
+
+        $body = '{
+            "flow-node-inventory:meter": [
+                {
+                    "meter-id": '.$count.', 
+                    "meter-name": "'.$meterName.'", 
+                    "flags": "meter-kbps meter-burst", 
+                    "container-name": "abcd",
+                    "meter-band-headers": {
+                        "meter-band-header": [
+                            {
+                                "band-id": 0,
+                                "meter-band-types": {
+                                    "flags": "ofpmbt-drop"
+                                },
+                                "drop-rate": '.$dropRate.',
+                                "drop-burst-size": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        }';
+
+
         $client = new Client();
-        
-        $headers = ['Authorization' => 'Basic YWRtaW46YWRtaW4=', 'Content-Type' => 'application/json','Accept' => 'application/json'];
-        $request = $client->put('http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:2/meter/2', ['auth' => ['admin', 'admin'], 'Headers' => $headers, 'Body' => $data]);
-        //$request = $client->createRequest('PUT', '/put', ['json' => ['foo' => 'bar']]);
-        //$request = new Request('PUT', 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:2/meter/2', $headers, $data);
-        //return view('newMeter');
-        
-        return view('newMeter', ['id'=>$node_id]);
+
+        $response = $client->put($url, [
+            'auth' => [
+                'admin', 
+                'admin'
+            ], 
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ], 
+            'body' => $body
+        ]);
+        echo "<script>alert('Successfully!'); location.href = 'http://localhost:8000/node/{$node_id}';</script>";
     }
     public function editMeter($node_id)
     {
@@ -84,8 +106,9 @@ class MeterController extends Controller
 
     public function deleteMeter($node_id, $meter_name)
     {
+        $url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id;
         $client = new Client();
-        $response = $client->get('http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id, ['auth' => ['admin', 'admin']]);
+        $response = $client->get($url, ['auth' => ['admin', 'admin']]);
         $json = json_decode($response->getBody()->getContents(), true);
         $meters = $json['node']['0']['flow-node-inventory:meter'];
         foreach ($meters as $meter) 
@@ -102,10 +125,31 @@ class MeterController extends Controller
 
     public function deleteMeterMenu($node_id)
     {
-        $client = new Client();
-        $response = $client->get('http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id, ['auth' => ['admin', 'admin']]);
-        $json = json_decode($response->getBody()->getContents(), true);
-        $nodes = $json['node']['0']['flow-node-inventory:meter'];
-        return view('deleteMeter', ['node_id' => $node_id, 'nodeList' => $nodes]);
+        $url = 'http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id;
+        $handle = curl_init($url);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+        /* Get the HTML or whatever is linked in $url. */
+        $response = curl_exec($handle);
+        /* Check for 404 (file not found). */
+        $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+        if($httpCode != 404)
+        {
+            $client = new Client();
+            $response = $client->get('http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/'.$node_id, ['auth' => ['admin', 'admin']]);
+            $json = json_decode($response->getBody()->getContents(), true);
+            if(isset($json['node']['0']['flow-node-inventory:meter']))
+            {
+                $nodes = $json['node']['0']['flow-node-inventory:meter'];
+                return view('deleteMeter', ['node_id' => $node_id, 'nodeList' => $nodes]);
+            }
+            else
+            {
+                echo "<script>alert('No meter!'); location.href = 'http://localhost:8000/node/{$node_id}';</script>";
+            }
+        }
+        else
+        {
+            echo "<script>alert('No meters!'); location.href = 'http://localhost:8000/node/{$node_id}';</script>";
+        }
     }
 }
