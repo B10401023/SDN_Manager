@@ -3,11 +3,10 @@
 @extends('layouts.main')
 
 @section('content')
-	<html>
-	<body>
-
-	<h2>New Meter</h2>
-
+	<h1 style="text-align: center">
+        - New Meter -
+    </h1>
+    <center>
 	<form action="{{ url('/node/'.$id.'/newmeter/'.$count) }}" method="get">
 	  Meter ID:<br>
 	  <input type="text" name="meterId" value="{{ $count }}">
@@ -20,7 +19,5 @@
 	  <br><br>
 	  <input type="submit" value="Submit">
 	</form>
-
-	</body>
-	</html>
+	</center>
 @endsection
